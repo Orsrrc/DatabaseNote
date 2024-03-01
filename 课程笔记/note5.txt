@@ -1,0 +1,117 @@
+/*注意数据库是不是本数据库!!!!!!!!*/
+
+
+--查询非计算机科学系中比计算机科学系任意一个学生年龄小的学生姓名和年龄
+Select Sname, Sage From Student Where Sage < any 
+(Select Sage From Student Where Sdept = '计算机系')
+and Sdept <>'计算机系'
+Select * From Student
+
+Select Sname, Sage From Student Where Sage <
+(Select max(Sage) From Student Where Sdept = '计算机系')
+and Sdept <>'计算机系'
+
+--查询非计算机系中比计算机系所有学生年龄都晓得学生姓名及年龄
+Select Sname, Sage From Student Where Sage < all
+(Select Sage From Student Where Sdept = '计算机系')
+and sdept<>'计算机系'
+Select * From Student
+
+--查询所有选修了c01号课程的学生姓名
+--本次查询涉及两个表
+Select Sname From Student Where Exists
+(Select *From SC Where Sno = Student.Sno and Cno = 'C01');
+
+--查询没有选修1号课程的学生姓名
+Select Sname From Student Where Not Exists
+(Select * From SC Where Sno = Student.Sno and Cno = '1');
+
+--查询与刘晨同在一个系学习的学生
+Select Sno, Sname, Sdept From Student S1/*给副表取名s1*/
+Where Exists(Select * From Student S2 Where S2.Sdept = s1.sdept and S2.Sname = '刘晨')
+and Sname<>'刘晨' /*去掉刘晨*/
+
+/*查询选修全部课程的学生姓名*/
+Select Sname From Student  Where Not Exists 
+(Select * From course Where not Exists 
+(Select * From Sc Where Sno = Student.Sno and Cno = Course.cno));
+
+/*查询没有选课的学生学号、姓名*/
+Select * From Student,SC Where Student.sno = SC.sno
+
+--使用外连接的左连接
+Select Student.Sno, Sname From Student left join SC on Student.Sno = SC.sno
+Where SC.Sno is NULL
+
+--使用存在查询
+Select Sno, Sname From Student Where not exists
+(Select * From SC Where Sno = Student.Sno)
+
+--查询计算机科学系的学生及年龄不大于19岁的学生 集合的并运算
+Select * From Student Where Sdept = '计算机系' 
+Union 
+Select * From Student Where Sage <= 19;
+
+--去掉重复元组，重复结果
+--在Union后面添加all 会保留重复的部分
+Select * From Student Where Sdept = '计算机系' 
+Union all
+Select * From Student Where Sage <= 19;
+
+--查询计算机系的学生与年龄不大于19岁的学生的交集
+Select * From Student Where Sdept = '计算机系'
+Intersect
+Select * From Student Where Sage <= 19
+
+--差运算
+/*查询计算机系的学生与年龄不大于19岁的学生的差集*/
+Select * From Student Where Sdept = '计算机系'
+except
+Select * From Student Where Sage <= 19
+
+--向学生表中添加一条自己的记录，其中用自己的信息，学号后7位
+Exec sp_help Student
+Insert into Student(Sno,Sname,Ssex,Sdept,Sage)
+values('0240313','你爹','男','大数据学院','19')
+
+Select * From Student
+
+/*向选修表中添加一条数据库基础的选课记录(学号以上面插入的为准)*/
+Select * From Course
+
+Insert into SC(Sno,Cno) Values('0240313','c04')
+
+Select *From SC
+
+/*将李勇的年龄改为25岁*/
+Update Student Set Sage = 25
+Where Sname = '李勇'
+
+Update Student Set Sage = Sage + 1;
+Update Student Set Sage += 1;
+
+Update SC Set Grade = 0 Where Sno in/*一个以上的结果用in 判断是否在这个集合里面*/ 
+(Select Sno From Student Where Sdept = 'CS');
+/*查询所有计算机系的学生的学号、姓名、所在系和成绩*/
+Select Student.Sno,Sname,Sdept,Grade From Student, SC Where
+Student.Sno = SC.Sno and Sdept = '计算机系'
+
+/*删除之前添加的自己信息的记录*/
+Select * From SC Where Sno = '0240313'
+Delete From SC Where Sno = '0240313'
+Delete From Student Where Sno = '0240313';
+Select * From Student
+Delete From SC
+
+
+/*空值*/
+--将张立同学的所在系改为空值
+Update Student Set Sdept = NULL Where Sname = '张立'
+Select * From Student
+
+Select * From SC Where Grade < 60 /*空值参与运算*/
+
+Select Sdept, Count(*) 人数 From Student Group By Sdept
+
+
+

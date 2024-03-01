@@ -1,0 +1,88 @@
+--检查是否正常导入三个表
+Select * From Student
+Select * From Course
+Select * From SC
+
+--查询第二个字是立的同学信息
+Select *  From Student Where Sname like '_立_';
+
+--查询所有不姓张的同学的姓名、学号和性别
+Select * From Student Where Sname Not Like '张__';
+Select Sname, Sno, Ssex From Student Where Sname Not Like '张__';
+
+--查询DB_Design课程的课程号和学分
+Select Cno, Ccredit From Course 
+Where Cname Like 'DB_Design'; /*名字中含有通配符“_” 如果表中有一个DbADeSign也会被查询到结果中*/
+Where Cname Like 'DB\_Design' Escape'\'/*添加转译字符*/
+
+
+/*空值查询*/
+--查询已经选课但还没有考试的学生学号和课程号
+Select Sno,Cno From SC Where Grade is NULL;
+--错误示范Select Sno,Cno From SC Where Grade Like 'NULL';
+
+--查询所有有成绩的学生学号和课程号以及成绩
+Select * From Sc Where Grade is not NULL;
+
+--多重条件语句
+/*查询所有计算机系的男同学的姓名、性别和所在系*/
+Select Sname, Ssex, Sdept From Student Where Sdept = '计算机系' And Ssex = '男';
+
+--查询计算机系、信息系和数学系的女同学，并且年龄在21岁一下的记录
+/*Error Select * From Student Where {Sdept = '计算机系' Or Sdept = '信息系' Or Sdept = '数学系'} And Sage < 20;*/
+Select * From Student 
+Where Sdept in ('计算机系', '信息系', '数学系') And Ssex = '女' and Sage < 21;
+
+--查询年龄在20岁一下和21岁以上的男同学姓名和年龄
+Select Sname, Sage From Student
+Where Ssex = '男' And Sage Not Between  20 And 21;
+/*Between and 是一个连续的范围 格式为查询的列名 在什么和什么之间*/
+Select Sname, Sage From Student
+Where Ssex = '男' And Sage < 20 Or Sage > 21
+
+--查询所有学生成绩，将成绩由高到低来显示
+Select * From SC Order By Grade Desc /*Desc 降序排列*/
+
+/*查询所有选了c02课程的选课记录，将成绩由高到低显示*/
+Select * From SC Where Cno = 'c02' Order By Grade Desc;
+
+--查询所有学生的选课记录，但未考试的不显示，成绩由低到高显示
+Select * From SC Where Grade is Not NULL Order By Grade Asc /*ASC是升序*/
+
+--查询所有学生的选课记录，先按学号升序，再按成绩降序显示
+Select * From SC Where Grade is Not NULL Order By Sno ASC, Grade Desc
+/*排序的混合条件,顺序不能反*/
+
+--查询学生总人数,结果的标题为总人数
+Select Count(*) As 总人数 From Student
+Select Count(*) 总人数 From Student
+
+/*查询有多少条记录*/
+--查询选修了课程的学生人数
+Select Count(Distinct Sno) As 总人数 From SC 
+
+--查询一共有多少个系
+Select Count(Distinct Sdept) As 总课程 From Student
+--Distinct去掉重复的
+
+--查询所有学生的平均年龄
+Select AVG(Sage) As 平均年龄 From Student
+
+--查询学生年龄最大的值
+Select Max(sage) As 最小年龄 From Student
+Delete From Student Where Sname in('张三', '李四');
+
+--查询最大与最小年龄的差值
+Select (Max(Sage) - Min(Sage)) As 最大与最小差值 From Student
+
+/*Group By分组*/
+
+--求各个课程号以及相应的选课人数
+Select Cno, Count(Sno) From SC Group By Cno;
+
+--查询各系的学生人数
+Select Sdept, Count(Sno) As 人数 From Student Group By Sdept;
+--查询学生男女生人数
+Select Ssex, Count(Sno) As 人数 From Student Group By Ssex;
+--查询各个年龄的男女生人数
+Select Sage, Ssex, Count(Sno) As 人数 From Student Group By Ssex, Sage;

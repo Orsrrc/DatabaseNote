@@ -1,0 +1,97 @@
+exec sp_helptext is_student2
+
+create view Is_student2
+as
+Select sno,sname,sage from student
+where sdept = '信息系'
+with check option
+
+/*建立信息系选修了c01号课程的学生的视图(包括学号、姓名、成绩)*/
+
+Create View is_s2(学号,姓名,成绩)
+As
+Select student.sno,sname,grade from student, sc
+where sdept = '信息系' and student.sno = sc.sno and sc.sno = 'c01'
+
+/*建立信息系选修c01号课程且成绩在80分以上的学生的视图*/
+Create View is_s3()
+AS
+Select 学号,姓名,成绩 from is_s2 where 成绩>=80
+
+/*定义一个反映学生出生年份的视图*/
+Create View bt_s(Sno, Sname, Sbirth)
+AS
+Select Sno,Sname,year(getdate()) - Sage from Student
+--可以添加别名 也可以在创建视图的时候设置列名
+
+Select * From bt_s
+/*将学生的学号及平均成绩定义为一个视图*/
+Create View S_G(Sno,Gavg)
+AS
+Select Sno,avg(Grade) From Sc Group by Sno
+Select * From S_G 
+
+Drop view bt_s
+Select * From is_s2;
+Select * From is_s3
+Select * From Student
+
+/*把李勇的所在系改为信息系*/
+Update Student Set Sdept = '信息系'
+Where Sname = '李勇'
+Drop View is_s3;
+
+//发现将bt_s视图删除后它所引用的is_s2 . is_3 都无法访问
+Select sno,Sage From is_student2 where sage < 22;
+
+/*查询选修了C01号课程的信息系学生*/
+Select IS_Student2.sno,Sname From is_Student2,sc
+Where IS_student2.Sno = Sc.sno and SC.cno = 'c01'
+
+/*在S_G视图中查询平均成绩在90分以上的学生学号和平均成绩*/
+exec sp_helptext s_g
+Select * From S_G Where gavg >= 80;
+Select Sno,avg(grade) From sc Group by sno where avg(Grade) >= 80;--error
+--在引用分组当中 得使用having不使用where
+Select Sno,AVG(grade) From SC Group by Sno having Avg(Grade) >= 80;
+
+/*把信息系学生视图中的学号9512101的姓名改为王勇*/
+Update is_Student2 set sname = '王勇' where sno = '9512101'
+Select * from is_Student2
+Select * From student
+
+/*向信息系学生视图is_s中插入一个新的学生记录*/
+insert into is_student2 values('1215129', '赵新', 20)
+exec sp_help student
+
+/*通过视图删除刚才添加的记录*/
+Delete From is_student2 where sno = '1215129'
+Delete From is_student2 where sno = '9512101'
+Select * From S_G
+update s_g set gavg = 90 where sno = '9512101'
+
+
+
+------------------------------------分割线---------------------------------------------
+--第四章
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+insert into course values('c01','计算机文化课',3,1)
+insert into course values('c02','VB',2,3)
+insert into course values('c03','计算机网络',4,7)
+insert into course values('c04','数据库基础',6,6)
+insert into course values('c05','高等数学',8,2)
+insert into course values('c06','数据结构',5,4)

@@ -1,0 +1,123 @@
+Select * from student
+Select Sname from student
+Select * From student where ssex = '男'
+select * from sc where grade is not null order by grade desc
+select count(*) from course
+select max(grade) from sc
+select ssex, count(*) 人数 from student group by ssex
+
+
+
+--连接查询:涉及两个以上的表的查询
+
+--等值连接:连接运算符为=
+
+Select Student.*,SC.* From Student,SC Where Student.Sno = SC.Sno
+
+--发现Sno列是重复的
+
+--将上述连接改为自然链接完成
+Select Student.Sno,Sname,Ssex,Sage,Sdept,Cno,Grade From Student,SC Where Student.Sno = SC.Sno
+
+--如果有相同列的话一定要指定相同列是属于哪一列
+
+--一条Sql语句可以同时完成选择和连接查询，这是Where子句有连接谓词和选择谓词组成的复合条件
+
+--查询选修C02课程好且成绩在75分以上的所有学生的学号和姓名
+Select Student.Sno, Sname From Student,SC Where Student.Sno = Sc.Sno and Cno = 'c02' and Sc.Grade > 75;
+--由于课程号和成绩都是Course表中的所以上句中的Cno和grade不需要添加所属
+
+--自身连接
+/*查询每一门课*/
+Select * From Course
+Select * From Course
+
+Select first.Cno,Second.Semester From course first, course second
+Where First.Semester = second.cno
+
+--外连接与普通连接的区别
+--显示所有学生的学号、姓名、课程号和成绩
+
+Select * From Student
+Select * From Course
+Select Student.Sno,Sname,Cno,Grade
+From Student,SC
+Where Student.Sno = SC.Sno
+
+/*统计所有学生人数*/
+Select Count(*) From Student
+/*统计所有选课学生人数*/
+Select Count(Distinct Sno) From SC
+--Distinct Sno 去掉重复值
+
+/*找出没有选课的学生数据(使用一条SQL查询完成)*/
+Select distinct Sname From student, SC Where Student.Sno = SC.Sno
+
+普通连接操作只能输出满足连接条件的元组
+外连接操作以指定表为连接主体,将主体表
+
+
+Select Student.Sno, Sname,SSex,Sage,Sdept,Cno,Grade
+from Student left Join Sc on (Student.Sno = Sc.Sno)
+Where Cno is NULL
+--left out Join左外连接
+--right join右外连接
+--full join 完全连接
+
+--查询总共的课程门数
+Select count(*) From course
+/*查询有多少门课程选修*/
+Select count(Distinct Sno) From SC
+
+/*找出没有被选的课程数据（使用一条SQL查询完成）*/
+Select Distinct Cno From Sc where Grade is NULL
+
+--查询每个学生的学号、姓名、选修的课程名及成绩
+Select Student.Sno,Sname,Cname,Grade From Student,Sc,Course
+where Student.Sno = Sc.Sno and Sc.Cno = Course.Cno
+
+--嵌套查询
+Select Sname From Student Where Sno In (Select Sno From Sc Where Cno = '2');
+
+--子查询的限制
+--不能进行排序 order by
+
+--查询学生表中计算机系、信息系、数学系的所有学生的学号、姓名和所在系
+Select Sno,Sname, Sdept From Student
+Where Sdept = '计算机系' or sdept = '信息系' or sdept = '数学系'
+
+Select Sno, Sname, Sdept From Student Where Sdept in ('计算机系','信息系','数学系');
+
+
+--相关子查询
+/*查询与刘晨同在一个系的学生学号、姓名和所在系*/
+Select Sno,Sname,Sdept From Student Where Stdept in (Select sdept From Student Where Sname = '刘晨')
+
+/*查询选修了课程名为vb的学生学号和姓名*/
+Select Sno,Sname From Student Where Sno in 
+(Select Sno From SC Where Cno = 'c02' or Cno in 
+(Select cno From course Where Cname = 'VB'))
+
+/*用连接查询来实现*/
+Select Student.Sno, Sname From Student, Sc, Course
+Where Student.Sno = Sc.Sno And Sc.Cno = Course.Cno and Cname = 'VB'
+/*找出每个学生超过他选修课程平均成绩的课程号*/
+Select Sno,Cno From Sc x Where Grade >= (Select avg(Grade) From sc y where y.sno = x.sno)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

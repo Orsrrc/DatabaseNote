@@ -1,0 +1,99 @@
+--基本查询语句
+select * from Student
+select * from SC
+select * from Course
+
+
+--建立索引
+--为学生-课程数据库中的Student,Course,SC三个表建立索引.Student表按学号升序建立唯一索引,Course表按课程号升序建立为一索引
+--升序是默认的可以不加 降序得添加Desc
+Create Unique index Stusno ON Student(Sno);
+Create Unique Index Coucno ON Course(Cno);
+Create Unique Index SCno ON SC(Sno ASC, Cno Desc);
+
+--查看已经建立的索引
+exec sp_help Student
+exec sp_help Course
+exec sp_help SC
+
+--删除SC表上的SCno索引
+Drop index SC.SCno
+--表名称.索引名
+
+
+
+--数据语句
+--只要是查询都是Select关键字开头
+--查询全体学生的学号与姓名
+Select Sno, Sname From Student;
+--查询全体学生的姓名、学号、所在系
+Select Sname, Sno, Sdept From Student;
+--查询学生表中的所有的列
+Select * from student
+--查询全体学生的姓名及其出生年份
+Select Sname, 2022-Sage AS '出生年份' from Student --出生年份可以不用引号
+
+--查询全体学生的姓名、出生年份和所在院系，要求用小写字母表示系名
+
+Select Sname, '出生年份', 2022-Sage, Lower(Sdept) From Student
+--Lower 变为小写 Uper 变为大写
+
+--如何使用获取年份的函数来计算学生的出生年份，完善上述的查询语句
+Select Sname, year(getdate())-Sage 书生年份 From Student
+
+--获取当前年份的函数year(getdate())
+
+--计算1到10的累加和并表示出来
+Select 1+2+3+4+5+6+7+8+9+10 As [1到10的累加和]
+
+--查询选修了课程的学生学号
+Select Sno From SC
+
+--去掉重复结果
+Select Distinct Sno
+From SC;
+
+--查询计算机系全体学生名单
+Select Sname From Student Where Sdeot = '计算机系'
+
+--'='等于比较运算符
+
+--查询所有年龄在20岁以下的学生姓名及其年龄
+Select Sname, Sage From Student Where Sage <20
+
+--查询考试成绩有不及格的学生的学号
+Select Sno From SC Where grade < 60 
+
+--查询年龄在20~30岁（包括20、30）之间的学生的姓名性别和年龄
+Select Sname, Sdept, Sage From Student
+Where Sage Between 20 and 30;
+
+--查询年龄在20~30岁(包括(20.30)之间的学生的姓名性别和年龄
+Select Sname,Sdept, Sage From Student
+Where Sage Not Between 20 and 23
+
+--查询成绩为中等(70-79)的学生的学号和课程号及成绩
+Select * From SC Where Grade between 70 and 79
+Select * From SC Where Grade>=70 and Grade <= 79
+
+--查询计算机系、信息系学生的姓名和性别
+Select Sname, Sex From Student
+Where Sdept in('计算机系', '信息系')
+Select Sname, Ssex From Student
+Where Sdept = '计算机系' or Sdept = '信息系'
+
+--查询非计算机系、非信息系学生的姓名和性别
+Select Sname, Ssex From Student
+Where Sdept not in('计算机系', '信息系')
+Select * From Student
+
+--查询学号为9512101的学生的详细情况
+Select * From Student Where Sno Like '9512101'
+Select * From Student Where Sno = '9512101'
+Select * From Student Where Sno in('9512101')
+
+--查询所有姓刘学生的姓名、学号和性别
+Select Sname, Sno, Ssex From Student Where Sname Like '刘%'
+
+--查询姓名是三个汉字的学生姓名
+Select Sname From Student Where Sname Like '___'
